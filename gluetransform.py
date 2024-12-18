@@ -14,11 +14,12 @@ s3_script_key = "scripts/glue_etl_s3.py"
 s3_path = "raw_data/"
 transformed_path = "transformed-data/"
 file_name = "output_csv_full.csv"
-local_script_path = "glue_etl_s3.py"  # Path to the local ETL script to upload to S3
+local_script_path = "glue_etl_s3.py"  
 role_name = "DataPipelineRole"
 glue_job_name = "InternationalTradeETL"
 glue_crawler_name = "glue-crawler"
 glue_db = "Gluemeta"
+#Policy for Glue 
 policy_glue = {
     "Version": "2012-10-17",
     "Statement": [
@@ -44,7 +45,8 @@ permission_policy = {
                 "athena:*",
                 "logs:CreateLogGroup",
                 "logs:CreateLogStream",
-                "logs:PutLogEvents"
+                "logs:PutLogEvents",
+                "cloudwatch:PutMetricData"
             ],
             "Resource": "*"
         }
@@ -95,7 +97,7 @@ def create_iam_role():
         logger.info(f"Permissions policy attached to {role_name}.")
     except Exception as e:
         logger.error(f"Failed to attach policy: {e}")
-
+# Creating Glue job 
 def create_glue_job():
     glue = boto3.client("glue")
     script_location = f"s3://{s3_bucket}/{s3_script_key}"
@@ -114,7 +116,7 @@ def create_glue_job():
                 "--enable-metrics": "true",
                 "--enable-continuous-logging": "true"
             },
-            MaxCapacity=2.0  # Adjust capacity as needed
+            MaxCapacity=2.0  # Worker Capacity 
         )
         logger.info(f"Glue job {glue_job_name} created.")
     except glue.exceptions.AlreadyExistsException:
