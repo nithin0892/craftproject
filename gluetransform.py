@@ -5,7 +5,7 @@ import requests
 import zipfile
 import logging
 
-# Configuration
+# Config
 url = "https://www.stats.govt.nz/assets/Uploads/International-trade/International-trade-September-2024-quarter/Download-data/international-trade-september-2024-quarter-csv.zip"
 local_download_path = "international_trade.zip"
 extracted_data = "unzipped"
@@ -51,7 +51,7 @@ permission_policy = {
     ]
 }
 
-# Set up logging
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -72,7 +72,7 @@ def upload_etl_script_to_s3():
         logger.info(f"ETL script uploaded to s3://{s3_bucket}/{s3_script_key}")
     except Exception as e:
         logger.error(f"Failed to upload ETL script: {e}")
-
+# Role creation 
 def create_iam_role():
     iam = boto3.client("iam")
     try:
@@ -158,12 +158,12 @@ def glue_crawler():
         logger.error(f"Failed to create Glue Crawler: {e}")
 
 def main():
-    #create_s3_bucket()
+    create_s3_bucket()
     upload_etl_script_to_s3()
-    #create_iam_role()
-    #create_glue_job()
+    create_iam_role()
+    create_glue_job()
     trigger_glue_job()
-    #glue_crawler()
+    glue_crawler()
 
 if __name__ == "__main__":
     main()
