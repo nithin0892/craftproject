@@ -37,6 +37,7 @@ def glue_etl():
         if missing_columns:
             raise ValueError(f"Missing required columns: {missing_columns}")
         logger.info("Inspecting raw 'time_ref' column values...")
+        #Display sample records
         df.select("time_ref").distinct().show(10, truncate=False)
         logger.info("Transforming 'time_ref' column to date format...")
         #Converting to data format 
