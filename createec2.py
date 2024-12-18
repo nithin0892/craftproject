@@ -9,8 +9,8 @@ get_iam = boto3.client('iam')
 
 
 sg_resp = get_ec2.create_security_group(
-    GroupName='Accessgroup-ec2-s3',
-    Description='SG For the lab'
+    GroupName='ec2SG',
+    Description='ssh ec2'
 )
 
 sg_id = sg_resp['GroupId']
@@ -101,7 +101,7 @@ response = get_ec2.run_instances(
     MaxCount=1,
     KeyName='nithinlabkey',  
     SecurityGroupIds=[sg_id],
-    SubnetId='subnet-04cea759bc408c3ee',
+    SubnetId='subnet-0f51ebf109bcabd87',
     IamInstanceProfile={'Name': instance_profile_name}, 
     UserData=encoded_ud_script  
 )
