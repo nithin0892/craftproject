@@ -43,7 +43,8 @@ permission_policy = {
                 "athena:*",
                 "logs:CreateLogGroup",
                 "logs:CreateLogStream",
-                "logs:PutLogEvents"
+                "logs:PutLogEvents",
+                "cloudwatch:PutMetricData"
             ],
             "Resource": "*"
         }
