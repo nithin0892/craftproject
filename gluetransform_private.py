@@ -106,27 +106,27 @@ def create_redshift_serverless_connection():
     redshift_database = "red_schema"  # Replace with your Redshift database name
     redshift_jdbc_url = f"jdbc:redshift://{redshift_endpoint}:{redshift_port}/{redshift_database}"
 
-    # VPC and security group details
-    # Your existing VPC and Security Group IDs
-    vpc_id = "vpc-06fbf42638eaf1f89"  # Replace with your VPC ID
-    subnet_id = "subnet-0556ce1171a851901"  # Replace with your subnet ID (you can choose an appropriate subnet for Glue)
-    security_group_ids = ["gluesg","redshiftsg","vpcendpointsg","ec2SG"]  # Replace with your Security Group ID(s)
+    # VPC and SG 
+   
+    vpc_id = "vpc-06fbf42638eaf1f89"  
+    subnet_id = "subnet-0556ce1171a851901" 
+    security_group_ids = ["gluesg","redshiftsg","vpcendpointsg","ec2SG"] 
     role_arn = "arn:aws:iam::329599635672:role/roleforredshift"
     try:
         glue.create_connection(
             ConnectionInput={
-                'Name': 'RedshiftServerlessConnection',  # Name of the connection
+                'Name': 'RedshiftServerlessConnection',  
                 'ConnectionType': 'JDBC',
                 'ConnectionProperties': {
                     'JDBC_CONNECTION_URL': redshift_jdbc_url,
                     'SECRET': 'arn:aws:secretsmanager:us-east-1:329599635672:secret:redshift!rsnamespace-admin-KmoXvJ'
-                    'IAM_ROLE':  role_arn # Required for IAM-based authentication
+                    'IAM_ROLE':  role_arn 
                 },
                 'PhysicalConnectionRequirements': {
-                    'AvailabilityZone': 'us-east-1a',  # Choose appropriate AZ for your VPC
+                    'AvailabilityZone': 'us-east-1a',
                     'SecurityGroupIdList': security_group_ids,
                     'SubnetId': subnet_id
-                    #'VpcId': vpc_id
+                    'VpcId': vpc_id
                 }
             }
         )
@@ -139,9 +139,7 @@ def create_redshift_serverless_connection():
 def create_glue_job():
     glue = boto3.client("glue")
     script_location = f"s3://{s3_bucket}/{s3_script_key}"
-
-    # The connection you created for Redshift Serverless
-    connection_name = "RedshiftServerlessConnection"  # This is the name of the connection created
+    connection_name = "RedshiftServerlessConnection" 
 
     try:
         glue.create_job(
@@ -157,9 +155,9 @@ def create_glue_job():
                 "--enable-metrics": "true",
                 "--enable-continuous-logging": "true"
             },
-            MaxCapacity=2.0,  # Adjust capacity as needed
+            MaxCapacity=2.0,  # Max workers
             Connections= {
-                'Connections': ['RedshiftServerlessConnection']  # Add the Redshift connection here
+                'Connections': ['RedshiftServerlessConnection'] 
             }
         )
         logger.info(f"Glue job {glue_job_name} created with Redshift Serverless connection.")
@@ -194,13 +192,13 @@ def glue_crawler():
         logger.error(f"Failed to create Glue Crawler: {e}")
 
 def main():
-    #create_s3_bucket()
-    #upload_etl_script_to_s3()
-    #create_iam_role()
+    create_s3_bucket()
+    upload_etl_script_to_s3()
+    create_iam_role()
     create_redshift_serverless_connection()
     create_glue_job()
-    #trigger_glue_job()
-    #glue_crawler()
+    trigger_glue_job()
+    glue_crawler()
 
 if __name__ == "__main__":
     main()
