@@ -15,7 +15,7 @@ logger.setLevel(logging.INFO)
 def glue_etl():
     try:
         # Job config
-        JOB_NAME = "InternationalTradeETL" 
+        JOB_NAME = "ETLab" 
         input_path = "s3://traderesults/raw_data/output_csv_full.csv" 
         output_path = "s3://traderesults/transformed-data/"          
         logger.info(f"Job started: {JOB_NAME}")
