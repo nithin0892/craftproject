@@ -104,30 +104,39 @@ sudo systemctl start amazon-cloudwatch-agent
 """
 encoded_ud_script = base64.b64encode(ud_script.encode('utf-8')).decode('utf-8')
 #Bastion host 
-public_instance_resp = ec2_client.run_instances(
-    ImageId='ami-0453ec754f44f9a4a',
-    InstanceType='t2.micro',
-    MinCount=1,
-    MaxCount=1,
-    KeyName='nithinlabkey',
-    SecurityGroupIds=[public_sg_id],
-    SubnetId='subnet-0ddfb90a4d814de63',
-    UserData=encoded_ud_script
-)
+try:
+
+    public_instance_resp = ec2_client.run_instances(
+        ImageId='ami-0453ec754f44f9a4a',
+        InstanceType='t2.micro',
+        MinCount=1,
+        MaxCount=1,
+        KeyName='nithinlabkey',
+        SecurityGroupIds=[public_sg_id],
+        SubnetId='subnet-0ddfb90a4d814de63',
+        UserData=encoded_ud_script
+    )
+except Exception as e :
+    print(f"Failed to launch Public EC2 instance: {str(e)}")
+
 public_instance_id = public_instance_resp['Instances'][0]['InstanceId']
 print(f"Public EC2 Instance {public_instance_id} launched.")
 
 # Private EC2 instance 
-private_instance_resp = ec2_client.run_instances(
-    ImageId='ami-0453ec754f44f9a4a',
-    InstanceType='t2.micro',
-    MinCount=1,
-    MaxCount=1,
-    KeyName='nithinlabkey',
-    SecurityGroupIds=[private_sg_id],
-    SubnetId='subnet-07d5c2276e8c7066d',
-    UserData=encoded_ud_script,
-    IamInstanceProfile={'Name': instance_profile_name}
-)
-private_instance_id = private_instance_resp['Instances'][0]['InstanceId']
-print(f"Private EC2 Instance {private_instance_id} launched.")
+try:
+    private_instance_resp = ec2_client.run_instances(
+        ImageId='ami-0453ec754f44f9a4a',
+        InstanceType='t2.micro',
+        MinCount=1,
+        MaxCount=1,
+        KeyName='nithinlabkey',
+        SecurityGroupIds=[private_sg_id],
+        SubnetId='subnet-07d5c2276e8c7066d',
+        UserData=encoded_ud_script,
+        IamInstanceProfile={'Name': instance_profile_name}
+    )
+    private_instance_id = private_instance_resp['Instances'][0]['InstanceId']
+    print(f"Private EC2 Instance {private_instance_id} launched.")
+except Exception as e :
+    print(f"Failed to launch Private EC2 instance: {str(e)}")
+
